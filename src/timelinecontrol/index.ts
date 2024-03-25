@@ -1,35 +1,11 @@
-//import {IInputs, IOutputs} from "./generated/ManifestTypes";
+import {IInputs, IOutputs} from "./generated/ManifestTypes";
 //import { IOutputs } from "./generated/ManifestTypes";
 import { Timeline } from 'vis-timeline/esnext/esm/vis-timeline-graph2d';
 import { DataSet } from 'vis-data';
 import Hammer from '@egjs/hammerjs';
 //import propagating from 'propagating-hammerjs';
 
-interface IInputs {
-    reloadTimeline: ComponentFramework.PropertyTypes.StringProperty;
-    reloadData: ComponentFramework.PropertyTypes.StringProperty;
-    editMode: ComponentFramework.PropertyTypes.TwoOptionsProperty;
-    customCss: ComponentFramework.PropertyTypes.StringProperty;
-    dataitems: ComponentFramework.PropertyTypes.StringProperty;
-    datagroups: ComponentFramework.PropertyTypes.StringProperty;
-    optionStart: ComponentFramework.PropertyTypes.StringProperty;
-    optionEnd: ComponentFramework.PropertyTypes.StringProperty;
-    optionStack: ComponentFramework.PropertyTypes.TwoOptionsProperty;
-    optionStackSubgroups: ComponentFramework.PropertyTypes.TwoOptionsProperty;
-    optionVerticalScroll: ComponentFramework.PropertyTypes.TwoOptionsProperty;
-    optionHorizontalScroll: ComponentFramework.PropertyTypes.TwoOptionsProperty;
 
-    listItems: ComponentFramework.PropertyTypes.StringProperty;
-    listCSS: ComponentFramework.PropertyTypes.StringProperty;
-
-}
-
-interface IOutputs {
-    selectedItem?: string;
-    timelineJSON?: string;
-    selectedModifer?: string;
-    removedJSON?: string; 
-}
 
 interface TimelineOptions {
     start?: string;
@@ -289,8 +265,8 @@ export class timelinecontrol implements ComponentFramework.StandardControl<IInpu
                     verticalScroll: context.parameters.optionVerticalScroll.raw,
                     horizontalScroll: context.parameters.optionHorizontalScroll.raw,
                     editMode: context.parameters.editMode.raw,
-                    start: context.parameters.optionStart.raw,
-                    end: context.parameters.optionEnd.raw
+                    start: context.parameters.optionStart.raw?.toISOString(),
+                    end: context.parameters.optionEnd.raw?.toISOString()
                 }
             )
         }
@@ -441,8 +417,8 @@ export class timelinecontrol implements ComponentFramework.StandardControl<IInpu
     private getTimelineOptions(context: ComponentFramework.Context<IInputs>): TimelineOptions {
         let isEditMode = context.parameters.editMode.raw;
         let options: TimelineOptions = {
-            start: context.parameters.optionStart.raw || undefined,
-            end: context.parameters.optionEnd.raw || undefined,
+            start: context.parameters.optionStart.raw?.toISOString() || undefined,
+            end: context.parameters.optionEnd.raw?.toISOString() || undefined,
             stack: context.parameters.optionStack.raw !== null ? context.parameters.optionStack.raw : false,
             stackSubgroups: context.parameters.optionStackSubgroups.raw !== null ? context.parameters.optionStackSubgroups.raw : false,
             verticalScroll: context.parameters.optionVerticalScroll.raw !== null ? context.parameters.optionVerticalScroll.raw : true,
@@ -525,7 +501,7 @@ export class timelinecontrol implements ComponentFramework.StandardControl<IInpu
     private updateListItems(listItems: any[], editMode: boolean, context: ComponentFramework.Context<IInputs>): void {
         const listItemsDiv = document.getElementById('list-items-container') as HTMLDivElement;
         // Clear existing list items
-        while (listItemsDiv.firstChild) {
+        while (listItemsDiv?.firstChild) {
             listItemsDiv.removeChild(listItemsDiv.firstChild);
         }
 

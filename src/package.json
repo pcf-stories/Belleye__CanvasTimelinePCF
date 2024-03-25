@@ -10,7 +10,9 @@
     "rebuild": "pcf-scripts rebuild",
     "start": "pcf-scripts start",
     "start:watch": "pcf-scripts start watch",
-    "refreshTypes": "pcf-scripts refreshTypes"
+    "refreshTypes": "pcf-scripts refreshTypes",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@egjs/hammerjs": "^2.0.17",
@@ -26,7 +28,17 @@
     "xss": "^1.0.15"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^1.2.25",
     "@microsoft/eslint-plugin-power-apps": "^0.2.6",
+    "@shko.online/componentframework-mock": "^0.5.0",
+    "@storybook/addon-essentials": "^8.0.4",
+    "@storybook/addon-interactions": "^8.0.4",
+    "@storybook/addon-links": "^8.0.4",
+    "@storybook/addon-webpack5-compiler-swc": "^1.0.2",
+    "@storybook/blocks": "^8.0.4",
+    "@storybook/html": "^8.0.4",
+    "@storybook/html-webpack5": "^8.0.4",
+    "@storybook/test": "^8.0.4",
     "@types/node": "^18.8.2",
     "@types/powerapps-component-framework": "^1.3.4",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
@@ -35,8 +47,10 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.1",
+    "eslint-plugin-storybook": "^0.8.0",
     "pcf-scripts": "^1",
     "pcf-start": "^1",
+    "storybook": "^8.0.4",
     "typescript": "^4.8.4"
   }
 }
