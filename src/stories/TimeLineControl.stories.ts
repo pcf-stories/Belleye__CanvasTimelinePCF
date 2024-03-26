@@ -32,7 +32,7 @@ import {
 import { timelinecontrol as Component } from "../timelinecontrol/index";
 
 import "../timelinecontrol/css/timelinecontrol.css";
-
+import { DataItems, DataGroups, ListItems } from "./data";
 interface StoryArgs {
   isVisible: boolean;
   isDisabled: boolean;
@@ -42,7 +42,6 @@ interface StoryArgs {
   reloadData: string;
   editMode: boolean;
   customCss: string;
-  datagroups: string;
 
   optionStart: Date;
   optionEnd: Date;
@@ -50,13 +49,13 @@ interface StoryArgs {
   optionStackSubgroups: boolean;
   optionVerticalScroll: boolean;
   optionHorizontalScroll: boolean;
-  listItems: string;
+  listItems: typeof ListItems;
   listCSS: string;
 }
 
-import { DataItems, DataGroups } from "./data";
-
-import "../../data/Demo1/item.css";
+import "../node_modules/vis-timeline/dist/vis-timeline-graph2d.min.css";
+import * as customCss from "../../data/Demo1/item.css";
+import * as listcss from "../../data/Demo1/list.css";
 export default {
   title: "TimeLineControl/TimeLineControl",
   argTypes: {
@@ -74,30 +73,51 @@ export default {
         category: "Parameters",
       },
     },
+    listItems: {
+      control: "array",
+      name: "ListItems",
+      table: {
+        category: "Parameters",
+      },
+    },
     optionStart: {
       control: "date",
-      name: "optionStart",
+      name: "Start",
       table: {
         category: "Parameters",
       },
     },
     optionEnd: {
       control: "date",
-      name: "optionEnd",
+      name: "End",
       table: {
         category: "Parameters",
       },
     },
     optionStackSubgroups: {
       control: "boolean",
-      name: "optionStackSubgroups",
+      name: "Stack Subgroups",
       table: {
         category: "Parameters",
       },
     },
     optionStack: {
       control: "boolean",
-      name: "optionStack",
+      name: "Stack",
+      table: {
+        category: "Parameters",
+      },
+    },
+    editMode: {
+      control: "boolean",
+      name: "Edit Mode",
+      table: {
+        category: "Parameters",
+      },
+    },
+    optionHorizontalScroll: {
+      control: "boolean",
+      name: "Horizontal Scroll",
       table: {
         category: "Parameters",
       },
@@ -122,28 +142,14 @@ export default {
     isVisible: true,
     dataitems: DataItems,
     dataGroups: DataGroups,
-    optionStart: new Date(),
-    optionEnd: new Date("2025-10-29"),
-    optionStack: false,
-    optionStackSubgroups: false,
+    listItems: ListItems,
+    optionStart: new Date("2024-03-17"),
+    optionEnd: new Date("2024-03-19"),
+    optionStack: true,
+    optionStackSubgroups: true,
+    editMode: true,
+    optionHorizontalScroll: true,
   },
-  decorators: [
-    (Story) => {
-      var container = document.createElement("div");
-      container.style.margin = "2em";
-      container.style.padding = "1em";
-      container.style.maxWidth = "350px";
-      container.style.border = "dotted 1px";
-
-      var storyResult = Story();
-      if (typeof storyResult == "string") {
-        container.innerHTML = storyResult;
-      } else {
-        container.appendChild(storyResult);
-      }
-      return container;
-    },
-  ],
 } as Meta<StoryArgs>;
 
 const renderGenerator = () => {
@@ -178,27 +184,66 @@ const renderGenerator = () => {
           listItems: StringPropertyMock,
           listCSS: StringPropertyMock,
         },
-        container
+        container,
+        {
+          customCss: "string",
+          datagroups: "string",
+          dataitems: "string",
+          selectedItem: "string",
+          timelineEnd: "Date",
+          timelineJSON: "string",
+          reloadData: "string",
+          listItems: "string",
+          reloadTimeline: "string",
+          removedJSON: "string",
+          selectedModifer: "string",
+          timelineStart: "Date",
+        }
       );
 
       mockGenerator.context.mode.isControlDisabled = args.isDisabled;
       mockGenerator.context.mode.isVisible = args.isVisible;
+
       mockGenerator.context._SetCanvasItems({
-        // src: args.src,
         dataitems: JSON.stringify(args.dataitems),
         datagroups: JSON.stringify(args.dataGroups),
-        optionStart: args.optionStart,
-        optionEnd: args.optionEnd,
+        listItems: JSON.stringify(args.listItems),
+        optionStart:
+          typeof args.optionStart == "number"
+            ? new Date(args.optionStart)
+            : args.optionStart,
+        optionEnd:
+          typeof args.optionEnd == "number"
+            ? new Date(args.optionEnd)
+            : args.optionEnd,
         optionStack: args.optionStack,
         optionStackSubgroups: args.optionStackSubgroups,
+        listCSS: listcss,
+        customCss: customCss,
+        editMode: args.editMode,
+        optionHorizontalScroll: args.optionHorizontalScroll,
+
         // listItems:JSON.stringify(args.dataitems)
       });
 
-      mockGenerator.onOutputChanged.callsFake(() => {
+      mockGenerator.onOutputChanged.callsFake(({ ...p }) => {
+        // console.log(args.dataitems.find((item) => item.id == selectedItem));
+        console.log("remove", p);
         // mockGenerator.context._parameters.dataitems._Refresh();
-        updateArgs({
-          //   src: mockGenerator.context._parameters.src.raw || undefined,
-        });
+        if (p.timelineJSON) {
+          updateArgs({
+            dataitems: JSON.parse(p.timelineJSON),
+          });
+        }
+        // console.log(JSON.parse(p.timelineJSON));
+        // if (removedJSON) {
+        //   // console.log("remove");
+        //   updateArgs({
+        //     dataitems: args.dataitems.filter(
+        //       (item) => !JSON.parse(removedJSON).includes(item.id)
+        //     ),
+        //   });
+        // }
       });
 
       mockGenerator.ExecuteInit();
@@ -208,6 +253,28 @@ const renderGenerator = () => {
       mockGenerator.context.mode.isVisible = args.isVisible;
       mockGenerator.context.mode.isControlDisabled = args.isDisabled;
       //   mockGenerator.context._parameters.src._SetValue(args.src);
+
+      console.log(args.editMode);
+
+      mockGenerator.context._SetCanvasItems({
+        // src: args.src,
+        // dataitems: JSON.stringify(args.dataitems),
+        // datagroups: JSON.stringify(args.dataGroups),
+        // listItems: JSON.stringify(args.listItems),
+        optionStart:
+          typeof args.optionStart == "number"
+            ? new Date(args.optionStart)
+            : args.optionStart,
+        optionEnd:
+          typeof args.optionEnd == "number"
+            ? new Date(args.optionEnd)
+            : args.optionEnd,
+        optionStack: args.optionStack,
+        optionStackSubgroups: args.optionStackSubgroups,
+        editMode: args.editMode,
+        optionHorizontalScroll: args.optionHorizontalScroll,
+        // listItems:JSON.stringify(args.dataitems)
+      });
       mockGenerator.ExecuteUpdateView();
     }
 
@@ -217,5 +284,5 @@ const renderGenerator = () => {
 
 export const TimeLineControl = {
   render: renderGenerator(),
-  parameters: { controls: { expanded: true } },
+  parameters: { controls: { expanded: false } },
 } as StoryObj<StoryArgs>;

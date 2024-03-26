@@ -9,7 +9,7 @@
     background-color: #fff; /* White background */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* A light shadow for depth */
     max-height: 400px; /* Maximum height before scrolling */
-    width: 100px !important;
+    /* width: 100px !important; */
     
 }
 
