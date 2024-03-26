@@ -57,7 +57,7 @@ import "../node_modules/vis-timeline/dist/vis-timeline-graph2d.min.css";
 import * as customCss from "../../data/Demo1/item.css";
 import * as listcss from "../../data/Demo1/list.css";
 export default {
-  title: "TimeLineControl/TimeLineControl",
+  title: "CanvasTimelinePCF/CanvasTimeline",
   argTypes: {
     dataitems: {
       control: "array",
@@ -282,7 +282,7 @@ const renderGenerator = () => {
   };
 };
 
-export const TimeLineControl = {
+export const CanvasTimeline = {
   render: renderGenerator(),
   parameters: { controls: { expanded: false } },
 } as StoryObj<StoryArgs>;
